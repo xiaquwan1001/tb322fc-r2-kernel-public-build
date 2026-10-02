@@ -1,0 +1,32 @@
+name: TB322FC R2 ReSukiSU 6.6.118 (SUSFS)
+
+permissions:
+  contents: write
+  actions: write
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-tb322fc-118:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+    with:
+      android_version: android15
+      kernel_version: "6.6"
+      sub_level: "118"
+      os_patch_level: "2026-01"
+      revision: r1
+      ksu_variant: ReSukiSU
+      version: "6.6.118-android15-8-g350f378eb496-ab14943902-4k"
+      build_time: N
+      use_zram: true
+      use_bbg: false
+      use_kpm: false
+      use_rekernel: false
+      cve_2026_43499_patch: false
+      enable_susfs: true
+      supp_op: false
+      droidspaces: off
+      droidspaces_ntsync: false
+      artifact_upload_mode: "上传全部"

@@ -320,15 +320,15 @@ jobs:
           $REPO --trace sync -c -j$(nproc --all) --no-tags --fail-fast
           echo "REMOTE_BRANCH=$REMOTE_BRANCH" >> $GITHUB_ENV
 
-          # TB322FC R2 uses the real Android common-kernel 6.6.111 tag while
-          # retaining the Android 15 / 6.6 build toolchain from the manifest.
+          # Pin the common kernel to the exact tag for the requested sub_level
+          # (e.g. android15-6.6.118_r00) while keeping the Android15/6.6 toolchain.
           if [[ "${{ inputs.android_version }}" == "android15" \
-             && "${{ inputs.kernel_version }}" == "6.6" \
-             && "${{ inputs.sub_level }}" == "111" ]]; then
-            git -C common fetch --depth=1 https://android.googlesource.com/kernel/common refs/tags/android15-6.6.111_r00
+             && "${{ inputs.kernel_version }}" == "6.6" ]]; then
+            KTAG="android15-6.6.${{ inputs.sub_level }}_r00"
+            git -C common fetch --depth=1 https://android.googlesource.com/kernel/common "refs/tags/$KTAG"
             git -C common checkout --detach FETCH_HEAD
-            test "$(awk '/^SUBLEVEL = / { print $3 }' common/Makefile)" = "111"
-            echo "Pinned common kernel source to android15-6.6.111_r00"
+            test "$(awk '/^SUBLEVEL = / { print $3 }' common/Makefile)" = "${{ inputs.sub_level }}"
+            echo "Pinned common kernel source to $KTAG"
           fi
 
       - name: 应用 Stock Config 伪装
